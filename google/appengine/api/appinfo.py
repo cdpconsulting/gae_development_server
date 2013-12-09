@@ -138,6 +138,8 @@ _IDLE_INSTANCES_REGEX = r'^([\d]+|automatic)$'
 _INSTANCES_REGEX = r'^[1-9][\d]*$'
 _INSTANCE_CLASS_REGEX = r'^([fF](1|2|4|4_1G)|[bB](1|2|4|8|4_1G))$'
 
+_CONCURRENT_REQUESTS_REGEX = r'^([1-9]\d*)$'
+
 
 
 
@@ -248,6 +250,7 @@ MINIMUM_PENDING_LATENCY = 'min_pending_latency'
 MAXIMUM_PENDING_LATENCY = 'max_pending_latency'
 MINIMUM_IDLE_INSTANCES = 'min_idle_instances'
 MAXIMUM_IDLE_INSTANCES = 'max_idle_instances'
+MAXIMUM_CONCURRENT_REQUEST = 'max_concurrent_requests'
 
 
 INSTANCES = 'instances'
@@ -368,6 +371,14 @@ _SUPPORTED_LIBRARIES = [
         'http://www.pythonware.com/library/pil/handbook/',
         'A library for creating and transforming images.',
         ['1.1.7']),
+    _VersionedLibrary(
+        'protorpc',
+        'https://code.google.com/p/google-protorpc/',
+        'A framework for implementing HTTP-based remote procedure call (RPC) '
+        'services.',
+        ['1.0'],
+        default_version='1.0',
+        ),
     _VersionedLibrary(
         'PyAMF',
         'http://www.pyamf.org/',
@@ -1229,6 +1240,8 @@ class AutomaticScaling(validation.Validated):
       MAXIMUM_IDLE_INSTANCES: validation.Optional(_IDLE_INSTANCES_REGEX),
       MINIMUM_PENDING_LATENCY: validation.Optional(_PENDING_LATENCY_REGEX),
       MAXIMUM_PENDING_LATENCY: validation.Optional(_PENDING_LATENCY_REGEX),
+      MAXIMUM_CONCURRENT_REQUEST: validation.Optional(
+          _CONCURRENT_REQUESTS_REGEX),
   }
 
 

@@ -14,15 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""Document matcher for Search API stub.
 
-
-"""Document matcher for Full Text Search API stub.
-
-DocumentMatcher provides an approximation of the Full Text Search API's query
-matching.
+DocumentMatcher provides an approximation of the Search API's query matching.
 """
 
-import logging
 
 from google.appengine.datastore import document_pb
 
@@ -30,6 +26,7 @@ from google.appengine._internal.antlr3 import tree
 from google.appengine.api.search import query_parser
 from google.appengine.api.search import QueryParser
 from google.appengine.api.search import search_util
+from google.appengine.api.search.stub import geo_util
 from google.appengine.api.search.stub import simple_tokenizer
 from google.appengine.api.search.stub import tokens
 
@@ -41,6 +38,53 @@ class ExpressionTreeException(Exception):
 
   def __init__(self, msg):
     Exception.__init__(self, msg)
+
+
+class DistanceMatcher(object):
+  """A class to match on geo distance."""
+  def __init__(self, geopoint, distance):
+    self._geopoint = geopoint
+    self._distance = distance
+
+  def _CheckOp(self, op):
+    if op == QueryParser.EQ:
+      raise ExpressionTreeException('Equality comparison not available for Geo type')
+    if op == QueryParser.NE:
+      raise ExpressionTreeException('!= comparison operator is not available')
+    if op not in (QueryParser.GT, QueryParser.GE, QueryParser.LESSTHAN, QueryParser.LE):
+      raise search_util.UnsupportedOnDevError(
+          'Operator %s not supported for distance matches on development server.'
+          % str(op))
+
+  def _IsDistanceMatch(self, geopoint, op):
+    distance = geopoint - self._geopoint
+    if op == QueryParser.GT or op == QueryParser.GE:
+      return distance >= self._distance
+    if op == QueryParser.LESSTHAN or op == QueryParser.LE:
+      return distance <= self._distance
+    else:
+      raise AssertionError, 'unexpected op %s' % str(op)
+
+  def IsMatch(self, field_values, op):
+    self._CheckOp(op)
+
+
+
+    for field_value in field_values:
+      geo_pb = field_value.geo()
+      geopoint = geo_util.LatLng(geo_pb.lat(), geo_pb.lng())
+      if self._IsDistanceMatch(geopoint, op):
+        return True
+
+
+
+    if field_values:
+      return False
+
+
+
+
+    return op == QueryParser.GT or op == QueryParser.GE
 
 
 class DocumentMatcher(object):
@@ -173,6 +217,19 @@ class DocumentMatcher(object):
     """Check if a numeric field matches a query tree node."""
     return self._MatchComparableField(field, match, float, operator, document)
 
+  def _MatchGeoField(self, field, matcher, operator, document):
+    """Check if a geo field matches a query tree node."""
+
+    if not isinstance(matcher, DistanceMatcher):
+      return False
+
+    if isinstance(field, tree.CommonTree):
+      field = query_parser.GetQueryNodeText(field)
+    values = [ field.value() for field in
+               search_util.GetAllFieldInDocument(document, field) if
+               field.value().type() == document_pb.FieldValue.GEO ]
+    return matcher.IsMatch(values, operator)
+
 
   def _MatchComparableField(
       self, field, match, cast_to_type, op, document):
@@ -223,23 +280,32 @@ class DocumentMatcher(object):
         'Operator %s not supported for numerical fields on development server.'
         % match.getText())
 
+  def _MatchAnyField(self, field, match, operator, document):
+    """Check if a field matches a query tree.
+
+    Args:
+      field: the name of the field, or a query node containing the field.
+      match: A query node to match the field with.
+      operator: The query node type corresponding to the type of match to
+        perform (eg QueryParser.EQ, QueryParser.GT, etc).
+      document: The document to match.
+    """
+
+    if isinstance(field, tree.CommonTree):
+      field = query_parser.GetQueryNodeText(field)
+    fields = search_util.GetAllFieldInDocument(document, field)
+    return any(self._MatchField(f, match, operator, document) for f in fields)
+
   def _MatchField(self, field, match, operator, document):
     """Check if a field matches a query tree.
 
     Args:
-      field_query_node: Either a string containing the name of a field, a query
-      node whose text is the name of the field, or a document_pb.Field.
+      field: a document_pb.Field instance to match.
       match: A query node to match the field with.
       operator: The a query node type corresponding to the type of match to
         perform (eg QueryParser.EQ, QueryParser.GT, etc).
       document: The document to match.
     """
-
-    if isinstance(field, (basestring, tree.CommonTree)):
-      if isinstance(field, tree.CommonTree):
-        field = query_parser.GetQueryNodeText(field)
-      fields = search_util.GetAllFieldInDocument(document, field)
-      return any(self._MatchField(f, match, operator, document) for f in fields)
 
     if field.value().type() in search_util.TEXT_DOCUMENT_FIELD_TYPES:
       if operator != QueryParser.EQ:
@@ -252,6 +318,13 @@ class DocumentMatcher(object):
     if field.value().type() == document_pb.FieldValue.DATE:
       return self._MatchDateField(field, match, operator, document)
 
+
+
+
+
+    if field.value().type() == document_pb.FieldValue.GEO:
+      return False
+
     type_name = document_pb.FieldValue.ContentType_Name(
         field.value().type()).lower()
     raise search_util.UnsupportedOnDevError(
@@ -261,13 +334,36 @@ class DocumentMatcher(object):
   def _MatchGlobal(self, match, document):
     for field in document.field_list():
       try:
-        if self._MatchField(field.name(), match, QueryParser.EQ, document):
+        if self._MatchAnyField(field.name(), match, QueryParser.EQ, document):
           return True
       except search_util.UnsupportedOnDevError:
 
 
 
         pass
+    return False
+
+  def _ResolveDistanceArg(self, node):
+    if node.getType() == QueryParser.VALUE:
+      return query_parser.GetQueryNodeText(node)
+    if node.getType() == QueryParser.FUNCTION:
+      name, args = node.children
+      if name.getText() == 'geopoint':
+        lat, lng = (float(query_parser.GetQueryNodeText(v)) for v in args.children)
+        return geo_util.LatLng(lat, lng)
+    return None
+
+  def _MatchFunction(self, node, match, operator, document):
+    name, args = node.children
+    if name.getText() == 'distance':
+      x, y = args.children
+      x, y = self._ResolveDistanceArg(x), self._ResolveDistanceArg(y)
+      if isinstance(x, geo_util.LatLng) and isinstance(y, basestring):
+        x, y = y, x
+      if isinstance(x, basestring) and isinstance(y, geo_util.LatLng):
+        distance = float(query_parser.GetQueryNodeText(match))
+        matcher = DistanceMatcher(y, distance)
+        return self._MatchGeoField(x, matcher, operator, document)
     return False
 
   def _CheckMatch(self, node, document):
@@ -283,19 +379,17 @@ class DocumentMatcher(object):
       return not self._CheckMatch(node.children[0], document)
 
     if node.getType() in query_parser.COMPARISON_TYPES:
-      field, match = node.children
-      if field.getType() == QueryParser.GLOBAL:
+      lhs, match = node.children
+      if lhs.getType() == QueryParser.GLOBAL:
         return self._MatchGlobal(match, document)
-      return self._MatchField(field, match, node.getType(), document)
+      elif lhs.getType() == QueryParser.FUNCTION:
+        return self._MatchFunction(lhs, match, node.getType(), document)
+      return self._MatchAnyField(lhs, match, node.getType(), document)
 
     return False
 
   def Matches(self, document):
-    try:
-      return self._CheckMatch(self._query, document)
-    except search_util.UnsupportedOnDevError, e:
-      logging.warning(str(e))
-      return False
+    return self._CheckMatch(self._query, document)
 
   def FilterDocuments(self, documents):
     return (doc for doc in documents if self.Matches(doc))

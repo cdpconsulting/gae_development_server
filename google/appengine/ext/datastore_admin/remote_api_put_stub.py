@@ -247,7 +247,7 @@ def get_remote_app_id(remote_url, extra_headers=None):
 
   Raises:
     FetchFailed: Urlfetch call failed.
-    ConfigurationError: URLfetch suceeded but results were invalid.
+    ConfigurationError: URLfetch succeeded but results were invalid.
   """
   rtok = str(random.random())[2:]
   url = remote_url + '?rtok=' + rtok
@@ -275,7 +275,7 @@ def get_remote_app_id(remote_url, extra_headers=None):
   if not response.startswith('{'):
     logging.info('Response unparasable: %s', response)
     raise ConfigurationError(
-        'Invalid response recieved from server: %s' % response)
+        'Invalid response received from server: %s' % response)
   app_info = yaml.load(response)
   if not app_info or 'rtok' not in app_info or 'app_id' not in app_info:
     logging.info('Response unparsable: %s', response)

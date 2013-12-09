@@ -56,6 +56,7 @@ __all__ = [
 
 
 
+
 import base64
 import copy
 import logging
@@ -93,7 +94,10 @@ from google.appengine.ext.mapreduce import util
 
 
 try:
+
   from google.appengine.ext import cloudstorage
+  if hasattr(cloudstorage, "_STUB"):
+    cloudstorage = None
 except ImportError:
   pass
 
@@ -1251,7 +1255,7 @@ class _OldAbstractDatastoreInputReader(InputReader):
       elif not namespace_keys:
         return [cls(entity_kind_name,
                     key_ranges=None,
-                    ns_range=namespace_range.NamespaceRange(),
+                    ns_range=namespace_range.NamespaceRange(_app=app),
                     batch_size=shard_count,
                     filters=filters)]
       else:
@@ -2229,6 +2233,7 @@ class LogInputReader(InputReader):
   INCLUDE_INCOMPLETE_PARAM = "include_incomplete"
   INCLUDE_APP_LOGS_PARAM = "include_app_logs"
   VERSION_IDS_PARAM = "version_ids"
+  MODULE_VERSIONS_PARAM = "module_versions"
 
 
   _OFFSET_PARAM = "offset"
@@ -2237,7 +2242,7 @@ class LogInputReader(InputReader):
   _PARAMS = frozenset([START_TIME_PARAM, END_TIME_PARAM, _OFFSET_PARAM,
                        MINIMUM_LOG_LEVEL_PARAM, INCLUDE_INCOMPLETE_PARAM,
                        INCLUDE_APP_LOGS_PARAM, VERSION_IDS_PARAM,
-                       _PROTOTYPE_REQUEST_PARAM])
+                       MODULE_VERSIONS_PARAM, _PROTOTYPE_REQUEST_PARAM])
   _KWARGS = frozenset([_OFFSET_PARAM, _PROTOTYPE_REQUEST_PARAM])
 
   def __init__(self,
@@ -2247,6 +2252,7 @@ class LogInputReader(InputReader):
                include_incomplete=False,
                include_app_logs=False,
                version_ids=None,
+               module_versions=None,
                **kwargs):
     """Constructor.
 
@@ -2262,7 +2268,10 @@ class LogInputReader(InputReader):
         but not yet finished, as a boolean.  Defaults to False.
       include_app_logs: Whether or not to include application level logs in the
         mapped logs, as a boolean.  Defaults to False.
-      version_ids: A list of version ids whose logs should be mapped against.
+      version_ids: A list of version ids whose logs should be read. This can not
+        be used with module_versions
+      module_versions: A list of tuples containing a module and version id
+        whose logs should be read. This can not be used with version_ids
     """
     InputReader.__init__(self)
 
@@ -2282,6 +2291,8 @@ class LogInputReader(InputReader):
       self.__params[self.INCLUDE_APP_LOGS_PARAM] = include_app_logs
     if version_ids:
       self.__params[self.VERSION_IDS_PARAM] = version_ids
+    if module_versions:
+      self.__params[self.MODULE_VERSIONS_PARAM] = module_versions
 
 
     if self._PROTOTYPE_REQUEST_PARAM in self.__params:
@@ -2381,9 +2392,14 @@ class LogInputReader(InputReader):
       raise errors.BadReaderParamsError("Input reader class mismatch")
 
     params = _get_params(mapper_spec, allowed_keys=cls._PARAMS)
-    if cls.VERSION_IDS_PARAM not in params:
-      raise errors.BadReaderParamsError("Must specify a list of version ids "
-                                        "for mapper input")
+    if (cls.VERSION_IDS_PARAM not in params and
+        cls.MODULE_VERSIONS_PARAM not in params):
+      raise errors.BadReaderParamsError("Must specify a list of version ids or "
+                                        "module/version ids for mapper input")
+    if (cls.VERSION_IDS_PARAM in params and
+        cls.MODULE_VERSIONS_PARAM in params):
+      raise errors.BadReaderParamsError("Can not supply both version ids or "
+                                        "module/version ids. Use only one.")
     if (cls.START_TIME_PARAM not in params or
         params[cls.START_TIME_PARAM] is None):
       raise errors.BadReaderParamsError("Must specify a starting time for "
@@ -2448,12 +2464,19 @@ class _GoogleCloudStorageInputReader(InputReader):
 
   Optional configuration in the mapper_sec.input_reader dictionary.
     BUFFER_SIZE_PARAM: the size of the read buffer for each file handle.
+    DELIMITER_PARAM: if specified, turn on the shallow splitting mode.
+      The delimiter is used as a path separator to designate directory
+      hierarchy. Matching of prefixes from OBJECT_NAME_PARAM
+      will stop at the first directory instead of matching
+      all files under the directory. This allows MR to process bucket with
+      hundreds of thousands of files.
   """
 
 
   BUCKET_NAME_PARAM = "bucket_name"
   OBJECT_NAMES_PARAM = "objects"
   BUFFER_SIZE_PARAM = "buffer_size"
+  DELIMITER_PARAM = "delimiter"
 
 
   _ACCOUNT_ID_PARAM = "account_id"
@@ -2462,7 +2485,14 @@ class _GoogleCloudStorageInputReader(InputReader):
   _JSON_PICKLE = "pickle"
   _STRING_MAX_FILES_LISTED = 10
 
-  def __init__(self, filenames, index=0, buffer_size=None, _account_id=None):
+
+
+
+
+
+
+  def __init__(self, filenames, index=0, buffer_size=None, _account_id=None,
+               delimiter=None):
     """Initialize a GoogleCloudStorageInputReader instance.
 
     Args:
@@ -2471,11 +2501,40 @@ class _GoogleCloudStorageInputReader(InputReader):
       index: Index of the next filename to read.
       buffer_size: The size of the read buffer, None to use default.
       _account_id: Internal use only. See cloudstorage documentation.
+      delimiter: Delimiter used as path separator. See class doc.
     """
     self._filenames = filenames
     self._index = index
     self._buffer_size = buffer_size
     self._account_id = _account_id
+    self._delimiter = delimiter
+    self._bucket = None
+    self._bucket_iter = None
+
+  def _next_file(self):
+    """Find next filename.
+
+    self._filenames may need to be expanded via listbucket.
+
+    Returns:
+      None if no more file is left. Filename otherwise.
+    """
+    while True:
+      if self._bucket_iter:
+        try:
+          return self._bucket_iter.next().filename
+        except StopIteration:
+          self._bucket_iter = None
+          self._bucket = None
+      if self._index >= len(self._filenames):
+        return
+      filename = self._filenames[self._index]
+      self._index += 1
+      if self._delimiter is None or not filename.endswith(self._delimiter):
+        return filename
+      self._bucket = cloudstorage.listbucket(filename,
+                                             delimiter=self._delimiter)
+      self._bucket_iter = iter(self._bucket)
 
   @classmethod
   def validate(cls, mapper_spec):
@@ -2516,6 +2575,12 @@ class _GoogleCloudStorageInputReader(InputReader):
         raise errors.BadReaderParamsError(
             "Object name is not a string but a %s" %
             filename.__class__.__name__)
+    if cls.DELIMITER_PARAM in reader_spec:
+      delimiter = reader_spec[cls.DELIMITER_PARAM]
+      if not isinstance(delimiter, str):
+        raise errors.BadReaderParamsError(
+            "%s is not a string but a %s" %
+            (cls.DELIMITER_PARAM, type(delimiter)))
 
   @classmethod
   def split_input(cls, mapper_spec):
@@ -2533,23 +2598,22 @@ class _GoogleCloudStorageInputReader(InputReader):
       A list of InputReaders. None when no input data can be found.
     """
     reader_spec = _get_params(mapper_spec, allow_old=False)
+    bucket = reader_spec[cls.BUCKET_NAME_PARAM]
+    filenames = reader_spec[cls.OBJECT_NAMES_PARAM]
+    delimiter = reader_spec.get(cls.DELIMITER_PARAM)
+    account_id = reader_spec.get(cls._ACCOUNT_ID_PARAM)
+    buffer_size = reader_spec.get(cls.BUFFER_SIZE_PARAM)
 
 
     all_filenames = []
-    bucket = reader_spec[cls.BUCKET_NAME_PARAM]
-    filenames = reader_spec[cls.OBJECT_NAMES_PARAM]
     for filename in filenames:
       if filename.endswith("*"):
         all_filenames.extend(
             [file_stat.filename for file_stat in cloudstorage.listbucket(
-                "/" + bucket,
-                prefix=filename[:-1],
-                _account_id=reader_spec.get(cls._ACCOUNT_ID_PARAM, None))])
+                "/" + bucket + "/" + filename[:-1], delimiter=delimiter,
+                _account_id=account_id)])
       else:
         all_filenames.append("/%s/%s" % (bucket, filename))
-
-
-
 
 
     readers = []
@@ -2557,20 +2621,26 @@ class _GoogleCloudStorageInputReader(InputReader):
       shard_filenames = all_filenames[shard::mapper_spec.shard_count]
       if shard_filenames:
         readers.append(cls(
-            shard_filenames,
-            buffer_size=reader_spec.get(cls.BUFFER_SIZE_PARAM, None),
-            _account_id=reader_spec.get(cls._ACCOUNT_ID_PARAM, None)))
+            shard_filenames, buffer_size=buffer_size, _account_id=account_id,
+            delimiter=delimiter))
     return readers
 
   @classmethod
   def from_json(cls, state):
-    return pickle.loads(state[cls._JSON_PICKLE])
+    obj = pickle.loads(state[cls._JSON_PICKLE])
+    if obj._bucket:
+      obj._bucket_iter = iter(obj._bucket)
+    return obj
 
   def to_json(self):
+    self._bucket_iter = None
     return {self._JSON_PICKLE: pickle.dumps(self)}
 
   def next(self):
     """Returns the next input from this input reader, a block of bytes.
+
+    Non existent files will be logged and skipped. The file might have been
+    removed after input splitting.
 
     Returns:
       The next input from this input reader in the form of a cloudstorage
@@ -2580,19 +2650,21 @@ class _GoogleCloudStorageInputReader(InputReader):
     Raises:
       StopIteration: The list of files has been exhausted.
     """
-
-
-    if self._index >= len(self._filenames):
-      raise StopIteration()
-    else:
-      options = {}
-      if self._buffer_size:
-        options["read_buffer_size"] = self._buffer_size
-      if self._account_id:
-        options["_account_id"] = self._account_id
-      handle = cloudstorage.open(self._filenames[self._index], **options)
-      self._index += 1
-      return handle
+    options = {}
+    if self._buffer_size:
+      options["read_buffer_size"] = self._buffer_size
+    if self._account_id:
+      options["_account_id"] = self._account_id
+    while True:
+      filename = self._next_file()
+      if filename is None:
+        raise StopIteration()
+      try:
+        handle = cloudstorage.open(filename, **options)
+        return handle
+      except cloudstorage.NotFoundError:
+        logging.warning("File %s may have been removed. Skipping file.",
+                        filename)
 
   def __str__(self):
 

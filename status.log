@@ -1,0 +1,561 @@
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	new file:   .gitignore
+#	modified:   RELEASE_NOTES
+#	modified:   VERSION
+#	modified:   _php_runtime.py
+#	modified:   _python_runtime.py
+#	modified:   api_server.py
+#	modified:   appcfg.py
+#	modified:   backends_conversion.py
+#	modified:   bulkload_client.py
+#	modified:   bulkloader.py
+#	modified:   demos/php/minishell/shell.php
+#	modified:   dev_appserver.py
+#	modified:   download_appstats.py
+#	modified:   endpointscfg.py
+#	modified:   gen_protorpc.py
+#	modified:   google/appengine/api/appinfo.py
+#	modified:   google/appengine/api/datastore_file_stub.py
+#	modified:   google/appengine/api/files/file_service_stub.py
+#	modified:   google/appengine/api/logservice/logservice_stub.py
+#	modified:   google/appengine/api/mail.py
+#	modified:   google/appengine/api/mail_service_pb.py
+#	modified:   google/appengine/api/modules/modules.py
+#	modified:   google/appengine/api/oauth/__init__.py
+#	modified:   google/appengine/api/oauth/oauth_api.py
+#	modified:   google/appengine/api/search/search.py
+#	modified:   google/appengine/api/search/search_util.py
+#	modified:   google/appengine/api/search/simple_search_stub.py
+#	modified:   google/appengine/api/search/stub/document_matcher.py
+#	modified:   google/appengine/api/search/stub/expression_evaluator.py
+#	new file:   google/appengine/api/search/stub/geo_util.py
+#	modified:   google/appengine/api/user_service_pb.py
+#	modified:   google/appengine/api/user_service_stub.py
+#	modified:   google/appengine/api/yaml_builder.py
+#	modified:   google/appengine/datastore/datastore_index.py
+#	modified:   google/appengine/datastore/datastore_pb.py
+#	modified:   google/appengine/datastore/datastore_pbs.py
+#	modified:   google/appengine/datastore/datastore_rpc.py
+#	modified:   google/appengine/datastore/datastore_sqlite_stub.py
+#	modified:   google/appengine/datastore/datastore_stub_util.py
+#	modified:   google/appengine/datastore/datastore_v4_pb.py
+#	new file:   google/appengine/datastore/datastore_v4_stub.py
+#	new file:   google/appengine/datastore/datastore_v4_validator.py
+#	modified:   google/appengine/datastore/entity_pb.py
+#	new file:   google/appengine/dist27/gae_override/__init__.py
+#	renamed:    google/appengine/dist27/httplib.py -> google/appengine/dist27/gae_override/httplib.py
+#	modified:   google/appengine/dist27/httplib.py
+#	new file:   google/appengine/dist27/python_std_lib/__init__.py
+#	new file:   google/appengine/dist27/python_std_lib/httplib.py
+#	modified:   google/appengine/ext/analytics/static/analytics_js.js
+#	modified:   google/appengine/ext/appstats/static/appstats_js.js
+#	modified:   google/appengine/ext/cloudstorage/__init__.py
+#	modified:   google/appengine/ext/cloudstorage/cloudstorage_stub.py
+#	modified:   google/appengine/ext/cloudstorage/common.py
+#	modified:   google/appengine/ext/cloudstorage/stub_dispatcher.py
+#	modified:   google/appengine/ext/datastore_admin/backup_handler.py
+#	modified:   google/appengine/ext/datastore_admin/config.py
+#	modified:   google/appengine/ext/datastore_admin/main.py
+#	modified:   google/appengine/ext/datastore_admin/remote_api_put_stub.py
+#	modified:   google/appengine/ext/datastore_admin/static/css/compiled.css
+#	modified:   google/appengine/ext/datastore_admin/templates/list_actions.html
+#	modified:   google/appengine/ext/datastore_admin/utils.py
+#	modified:   google/appengine/ext/mapreduce/base_handler.py
+#	modified:   google/appengine/ext/mapreduce/context.py
+#	modified:   google/appengine/ext/mapreduce/control.py
+#	modified:   google/appengine/ext/mapreduce/errors.py
+#	modified:   google/appengine/ext/mapreduce/handlers.py
+#	modified:   google/appengine/ext/mapreduce/input_readers.py
+#	modified:   google/appengine/ext/mapreduce/main.py
+#	modified:   google/appengine/ext/mapreduce/mapper_pipeline.py
+#	modified:   google/appengine/ext/mapreduce/model.py
+#	modified:   google/appengine/ext/mapreduce/output_writers.py
+#	modified:   google/appengine/ext/mapreduce/parameters.py
+#	modified:   google/appengine/ext/mapreduce/shuffler.py
+#	modified:   google/appengine/ext/mapreduce/status.py
+#	modified:   google/appengine/ext/mapreduce/util.py
+#	modified:   google/appengine/ext/ndb/context.py
+#	modified:   google/appengine/ext/ndb/model.py
+#	modified:   google/appengine/ext/remote_api/remote_api_stub.py
+#	modified:   google/appengine/ext/testbed/__init__.py
+#	modified:   google/appengine/ext/webapp/mail_handlers.py
+#	modified:   google/appengine/tools/adaptive_thread_pool.py
+#	modified:   google/appengine/tools/api_server.py
+#	modified:   google/appengine/tools/app_engine_web_xml_parser.py
+#	modified:   google/appengine/tools/appcfg.py
+#	new file:   google/appengine/tools/appcfg_java.py
+#	modified:   google/appengine/tools/appengine_rpc.py
+#	modified:   google/appengine/tools/appengine_rpc_httplib2.py
+#	modified:   google/appengine/tools/backends_xml_parser.py
+#	modified:   google/appengine/tools/dev-channel-js.js
+#	modified:   google/appengine/tools/dev_appserver.py
+#	modified:   google/appengine/tools/dev_appserver_apiserver.py
+#	modified:   google/appengine/tools/dev_appserver_import_hook.py
+#	modified:   google/appengine/tools/dev_appserver_upload.py
+#	modified:   google/appengine/tools/devappserver2/admin/memcache_viewer.py
+#	modified:   google/appengine/tools/devappserver2/admin/templates/cron.html
+#	modified:   google/appengine/tools/devappserver2/admin/templates/mail.html
+#	modified:   google/appengine/tools/devappserver2/admin/templates/memcache_viewer.html
+#	modified:   google/appengine/tools/devappserver2/admin/templates/xmpp.html
+#	modified:   google/appengine/tools/devappserver2/api_server.py
+#	modified:   google/appengine/tools/devappserver2/application_configuration.py
+#	modified:   google/appengine/tools/devappserver2/application_configuration_test.py
+#	modified:   google/appengine/tools/devappserver2/blob_download_test.py
+#	modified:   google/appengine/tools/devappserver2/blob_upload.py
+#	modified:   google/appengine/tools/devappserver2/devappserver2.py
+#	modified:   google/appengine/tools/devappserver2/devappserver2_test.py
+#	modified:   google/appengine/tools/devappserver2/dispatcher.py
+#	modified:   google/appengine/tools/devappserver2/dispatcher_test.py
+#	modified:   google/appengine/tools/devappserver2/endpoints/endpoints_server.py
+#	modified:   google/appengine/tools/devappserver2/endpoints/endpoints_server_regtest.py
+#	modified:   google/appengine/tools/devappserver2/endpoints/endpoints_server_test.py
+#	modified:   google/appengine/tools/devappserver2/endpoints/generated_error_info.py
+#	modified:   google/appengine/tools/devappserver2/endpoints/testdata/test_service.py
+#	new file:   google/appengine/tools/devappserver2/gcs_application.py
+#	new file:   google/appengine/tools/devappserver2/gcs_application_test.py
+#	modified:   google/appengine/tools/devappserver2/go_application.py
+#	modified:   google/appengine/tools/devappserver2/go_runtime.py
+#	modified:   google/appengine/tools/devappserver2/inotify_file_watcher.py
+#	new file:   google/appengine/tools/devappserver2/java_application.py
+#	new file:   google/appengine/tools/devappserver2/java_runtime.py
+#	modified:   google/appengine/tools/devappserver2/module.py
+#	modified:   google/appengine/tools/devappserver2/module_test.py
+#	modified:   google/appengine/tools/devappserver2/mtime_file_watcher.py
+#	modified:   google/appengine/tools/devappserver2/php/runtime.py
+#	modified:   google/appengine/tools/devappserver2/php/setup.php
+#	modified:   google/appengine/tools/devappserver2/python/request_handler.py
+#	modified:   google/appengine/tools/devappserver2/python/sandbox.py
+#	modified:   google/appengine/tools/devappserver2/runtime_config_pb2.py
+#	modified:   google/appengine/tools/devappserver2/safe_subprocess.py
+#	modified:   google/appengine/tools/devappserver2/watcher_common.py
+#	modified:   google/appengine/tools/devappserver2/wsgi_server.py
+#	modified:   google/appengine/tools/devappserver2/wsgi_server_test.py
+#	modified:   google/appengine/tools/endpointscfg.py
+#	new file:   google/appengine/tools/jarfile.py
+#	new file:   google/appengine/tools/value_mixin.py
+#	modified:   google/appengine/tools/web_xml_parser.py
+#	modified:   google/appengine/tools/yaml_translator.py
+#	modified:   google/net/proto2/proto/descriptor_pb2.py
+#	modified:   google/net/proto2/python/public/descriptor.py
+#	modified:   google/net/proto2/python/public/reflection.py
+#	modified:   google/net/proto2/python/public/text_encoding.py
+#	modified:   google/net/proto2/python/public/text_format.py
+#	modified:   google_sql.py
+#	modified:   lib/cacerts/urlfetch_cacerts.txt
+#	modified:   lib/django-1.5/AUTHORS
+#	modified:   lib/django-1.5/LICENSE
+#	modified:   lib/django-1.5/MANIFEST.in
+#	modified:   lib/django-1.5/PKG-INFO
+#	modified:   lib/django-1.5/django/__init__.py
+#	modified:   lib/django-1.5/django/conf/__init__.py
+#	modified:   lib/django-1.5/django/conf/global_settings.py
+#	modified:   lib/django-1.5/django/conf/locale/af/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/conf/locale/af/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/conf/locale/az/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/conf/locale/az/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/conf/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/conf/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/conf/locale/pl/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/conf/locale/pl/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/conf/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/conf/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/conf/project_template/project_name/settings.py
+#	modified:   lib/django-1.5/django/contrib/admin/locale/af/LC_MESSAGES/djangojs.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/af/LC_MESSAGES/djangojs.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/es_AR/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/es_AR/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/es_AR/LC_MESSAGES/djangojs.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/es_AR/LC_MESSAGES/djangojs.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/eu/LC_MESSAGES/djangojs.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/eu/LC_MESSAGES/djangojs.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/ka/LC_MESSAGES/djangojs.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/ka/LC_MESSAGES/djangojs.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/nb/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/nb/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/te/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/te/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/admin/locale/th/LC_MESSAGES/djangojs.mo
+#	modified:   lib/django-1.5/django/contrib/admin/locale/th/LC_MESSAGES/djangojs.po
+#	modified:   lib/django-1.5/django/contrib/admin/options.py
+#	modified:   lib/django-1.5/django/contrib/admin/sites.py
+#	modified:   lib/django-1.5/django/contrib/admin/widgets.py
+#	modified:   lib/django-1.5/django/contrib/admindocs/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/admindocs/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/auth/__init__.py
+#	modified:   lib/django-1.5/django/contrib/auth/admin.py
+#	modified:   lib/django-1.5/django/contrib/auth/backends.py
+#	modified:   lib/django-1.5/django/contrib/auth/forms.py
+#	modified:   lib/django-1.5/django/contrib/auth/hashers.py
+#	modified:   lib/django-1.5/django/contrib/auth/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/auth/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/auth/locale/nl/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/auth/locale/nl/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/auth/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/auth/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/auth/management/__init__.py
+#	modified:   lib/django-1.5/django/contrib/auth/tests/hashers.py
+#	new file:   lib/django-1.5/django/contrib/auth/tests/urls_admin.py
+#	modified:   lib/django-1.5/django/contrib/auth/tests/views.py
+#	modified:   lib/django-1.5/django/contrib/contenttypes/generic.py
+#	modified:   lib/django-1.5/django/contrib/contenttypes/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/contenttypes/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/contenttypes/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/contenttypes/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/flatpages/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/flatpages/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/flatpages/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/flatpages/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/flatpages/tests/csrf.py
+#	modified:   lib/django-1.5/django/contrib/flatpages/tests/middleware.py
+#	modified:   lib/django-1.5/django/contrib/flatpages/tests/templatetags.py
+#	modified:   lib/django-1.5/django/contrib/flatpages/tests/views.py
+#	modified:   lib/django-1.5/django/contrib/formtools/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/formtools/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/formtools/tests/wizard/cookiestorage.py
+#	modified:   lib/django-1.5/django/contrib/formtools/tests/wizard/forms.py
+#	modified:   lib/django-1.5/django/contrib/formtools/tests/wizard/namedwizardtests/tests.py
+#	modified:   lib/django-1.5/django/contrib/formtools/tests/wizard/sessionstorage.py
+#	modified:   lib/django-1.5/django/contrib/formtools/tests/wizard/wizardtests/tests.py
+#	modified:   lib/django-1.5/django/contrib/gis/db/backends/spatialite/operations.py
+#	modified:   lib/django-1.5/django/contrib/gis/geos/libgeos.py
+#	modified:   lib/django-1.5/django/contrib/gis/geos/tests/test_geos.py
+#	modified:   lib/django-1.5/django/contrib/gis/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/gis/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/gis/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/gis/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/gis/maps/google/gmap.py
+#	modified:   lib/django-1.5/django/contrib/gis/tests/geoadmin/tests.py
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/es_MX/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/es_MX/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/ka/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/ka/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/mn/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/mn/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/ro/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/ro/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/tr/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/humanize/locale/tr/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/localflavor/__init__.py
+#	modified:   lib/django-1.5/django/contrib/messages/locale/th/LC_MESSAGES/django.mo
+#	modified:   lib/django-1.5/django/contrib/messages/locale/th/LC_MESSAGES/django.po
+#	modified:   lib/django-1.5/django/contrib/messages/storage/session.py
+#	modified:   lib/django-1.5/django/contrib/messages/tests/base.py
+#	modified:   lib/django-1.5/django/contrib/messages/tests/session.py
+#	modified:   lib/django-1.5/django/contrib/sessions/backends/base.py
+#	modified:   lib/django-1.5/django/contrib/sessions/backends/signed_cookies.py
+#	modified:   lib/django-1.5/django/contrib/sessions/models.py
+#	new file:   lib/django-1.5/django/contrib/sessions/serializers.py
+#	modified:   lib/django-1.5/django/contrib/sessions/tests.py
+#	modified:   lib/django-1.5/django/contrib/sitemaps/tests/base.py
+#	modified:   lib/django-1.5/django/contrib/sitemaps/tests/generic.py
+#	modified:   lib/django-1.5/django/contrib/sitemaps/tests/http.py
+#	modified:   lib/django-1.5/django/contrib/sitemaps/tests/urls/http.py
+#	modified:   lib/django-1.5/django/contrib/staticfiles/storage.py
+#	modified:   lib/django-1.5/django/contrib/syndication/views.py
+#	modified:   lib/django-1.5/django/core/cache/backends/memcached.py
+#	modified:   lib/django-1.5/django/core/handlers/wsgi.py
+#	modified:   lib/django-1.5/django/core/management/commands/makemessages.py
+#	modified:   lib/django-1.5/django/core/management/commands/test.py
+#	modified:   lib/django-1.5/django/core/serializers/base.py
+#	modified:   lib/django-1.5/django/core/signing.py
+#	modified:   lib/django-1.5/django/db/backends/mysql/base.py
+#	modified:   lib/django-1.5/django/db/backends/mysql/validation.py
+#	modified:   lib/django-1.5/django/db/backends/oracle/creation.py
+#	modified:   lib/django-1.5/django/db/models/base.py
+#	modified:   lib/django-1.5/django/db/models/fields/__init__.py
+#	modified:   lib/django-1.5/django/db/models/fields/related.py
+#	modified:   lib/django-1.5/django/db/models/query.py
+#	modified:   lib/django-1.5/django/db/models/sql/query.py
+#	modified:   lib/django-1.5/django/db/models/sql/where.py
+#	modified:   lib/django-1.5/django/forms/forms.py
+#	modified:   lib/django-1.5/django/forms/formsets.py
+#	modified:   lib/django-1.5/django/middleware/csrf.py
+#	modified:   lib/django-1.5/django/template/defaulttags.py
+#	modified:   lib/django-1.5/django/template/loaders/cached.py
+#	modified:   lib/django-1.5/django/test/_doctest.py
+#	modified:   lib/django-1.5/django/test/html.py
+#	modified:   lib/django-1.5/django/test/simple.py
+#	modified:   lib/django-1.5/django/test/testcases.py
+#	modified:   lib/django-1.5/django/test/utils.py
+#	modified:   lib/django-1.5/django/utils/cache.py
+#	modified:   lib/django-1.5/django/utils/crypto.py
+#	modified:   lib/django-1.5/django/utils/encoding.py
+#	modified:   lib/django-1.5/django/utils/functional.py
+#	modified:   lib/django-1.5/django/utils/html.py
+#	modified:   lib/django-1.5/django/utils/http.py
+#	modified:   lib/django-1.5/django/utils/itercompat.py
+#	modified:   lib/django-1.5/django/utils/module_loading.py
+#	modified:   lib/django-1.5/django/utils/six.py
+#	modified:   lib/django-1.5/django/utils/timesince.py
+#	modified:   lib/django-1.5/django/views/decorators/debug.py
+#	modified:   lib/django-1.5/docs/Makefile
+#	modified:   lib/django-1.5/docs/_ext/djangodocs.py
+#	modified:   lib/django-1.5/docs/_ext/literals_to_xrefs.py
+#	modified:   lib/django-1.5/docs/conf.py
+#	modified:   lib/django-1.5/docs/faq/general.txt
+#	modified:   lib/django-1.5/docs/howto/auth-remote-user.txt
+#	modified:   lib/django-1.5/docs/howto/custom-model-fields.txt
+#	modified:   lib/django-1.5/docs/howto/custom-template-tags.txt
+#	modified:   lib/django-1.5/docs/howto/deployment/wsgi/index.txt
+#	modified:   lib/django-1.5/docs/howto/deployment/wsgi/modwsgi.txt
+#	modified:   lib/django-1.5/docs/howto/deployment/wsgi/uwsgi.txt
+#	modified:   lib/django-1.5/docs/howto/index.txt
+#	new file:   lib/django-1.5/docs/howto/static-files/deployment.txt
+#	new file:   lib/django-1.5/docs/howto/static-files/index.txt
+#	new file:   lib/django-1.5/docs/howto/upgrade-version.txt
+#	modified:   lib/django-1.5/docs/index.txt
+#	modified:   lib/django-1.5/docs/internals/committers.txt
+#	modified:   lib/django-1.5/docs/internals/contributing/committing-code.txt
+#	modified:   lib/django-1.5/docs/internals/contributing/localizing.txt
+#	modified:   lib/django-1.5/docs/internals/contributing/new-contributors.txt
+#	modified:   lib/django-1.5/docs/internals/contributing/writing-code/unit-tests.txt
+#	modified:   lib/django-1.5/docs/internals/contributing/writing-code/working-with-git.txt
+#	modified:   lib/django-1.5/docs/internals/deprecation.txt
+#	modified:   lib/django-1.5/docs/internals/security.txt
+#	modified:   lib/django-1.5/docs/intro/index.txt
+#	modified:   lib/django-1.5/docs/intro/overview.txt
+#	modified:   lib/django-1.5/docs/intro/reusable-apps.txt
+#	modified:   lib/django-1.5/docs/intro/tutorial01.txt
+#	modified:   lib/django-1.5/docs/intro/tutorial02.txt
+#	modified:   lib/django-1.5/docs/intro/tutorial03.txt
+#	modified:   lib/django-1.5/docs/intro/tutorial04.txt
+#	modified:   lib/django-1.5/docs/intro/tutorial05.txt
+#	new file:   lib/django-1.5/docs/intro/tutorial06.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/base.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/flattened-index.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/generic-date-based.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/generic-display.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/generic-editing.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/index.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/mixins-date-based.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/mixins-editing.txt
+#	modified:   lib/django-1.5/docs/ref/class-based-views/mixins-single-object.txt
+#	modified:   lib/django-1.5/docs/ref/clickjacking.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/admin/actions.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/admin/admindocs.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/admin/index.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/auth.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/contenttypes.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/csrf.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/flatpages.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/formtools/form-wizard.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/gis/gdal.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/gis/geoip.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/gis/geoquerysets.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/localflavor.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/messages.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/sitemaps.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/staticfiles.txt
+#	modified:   lib/django-1.5/docs/ref/contrib/syndication.txt
+#	modified:   lib/django-1.5/docs/ref/databases.txt
+#	modified:   lib/django-1.5/docs/ref/django-admin.txt
+#	modified:   lib/django-1.5/docs/ref/files/file.txt
+#	modified:   lib/django-1.5/docs/ref/forms/api.txt
+#	modified:   lib/django-1.5/docs/ref/forms/models.txt
+#	modified:   lib/django-1.5/docs/ref/forms/validation.txt
+#	modified:   lib/django-1.5/docs/ref/forms/widgets.txt
+#	modified:   lib/django-1.5/docs/ref/index.txt
+#	modified:   lib/django-1.5/docs/ref/middleware.txt
+#	modified:   lib/django-1.5/docs/ref/models/fields.txt
+#	modified:   lib/django-1.5/docs/ref/models/instances.txt
+#	modified:   lib/django-1.5/docs/ref/models/options.txt
+#	modified:   lib/django-1.5/docs/ref/models/querysets.txt
+#	modified:   lib/django-1.5/docs/ref/models/relations.txt
+#	modified:   lib/django-1.5/docs/ref/request-response.txt
+#	modified:   lib/django-1.5/docs/ref/settings.txt
+#	modified:   lib/django-1.5/docs/ref/signals.txt
+#	modified:   lib/django-1.5/docs/ref/template-response.txt
+#	modified:   lib/django-1.5/docs/ref/templates/api.txt
+#	modified:   lib/django-1.5/docs/ref/templates/builtins.txt
+#	modified:   lib/django-1.5/docs/ref/unicode.txt
+#	modified:   lib/django-1.5/docs/ref/urls.txt
+#	modified:   lib/django-1.5/docs/ref/utils.txt
+#	new file:   lib/django-1.5/docs/ref/views.txt
+#	modified:   lib/django-1.5/docs/releases/1.2-alpha-1.txt
+#	modified:   lib/django-1.5/docs/releases/1.2.txt
+#	modified:   lib/django-1.5/docs/releases/1.3-alpha-1.txt
+#	modified:   lib/django-1.5/docs/releases/1.3-beta-1.txt
+#	new file:   lib/django-1.5/docs/releases/1.3.3.txt
+#	new file:   lib/django-1.5/docs/releases/1.3.4.txt
+#	new file:   lib/django-1.5/docs/releases/1.3.5.txt
+#	new file:   lib/django-1.5/docs/releases/1.3.6.txt
+#	new file:   lib/django-1.5/docs/releases/1.3.7.txt
+#	modified:   lib/django-1.5/docs/releases/1.3.txt
+#	modified:   lib/django-1.5/docs/releases/1.4-alpha-1.txt
+#	modified:   lib/django-1.5/docs/releases/1.4-beta-1.txt
+#	modified:   lib/django-1.5/docs/releases/1.4.2.txt
+#	new file:   lib/django-1.5/docs/releases/1.4.3.txt
+#	new file:   lib/django-1.5/docs/releases/1.4.4.txt
+#	new file:   lib/django-1.5/docs/releases/1.4.5.txt
+#	new file:   lib/django-1.5/docs/releases/1.4.6.txt
+#	new file:   lib/django-1.5/docs/releases/1.4.7.txt
+#	new file:   lib/django-1.5/docs/releases/1.4.8.txt
+#	modified:   lib/django-1.5/docs/releases/1.4.txt
+#	modified:   lib/django-1.5/docs/releases/1.5-alpha-1.txt
+#	modified:   lib/django-1.5/docs/releases/1.5-beta-1.txt
+#	new file:   lib/django-1.5/docs/releases/1.5.1.txt
+#	new file:   lib/django-1.5/docs/releases/1.5.2.txt
+#	new file:   lib/django-1.5/docs/releases/1.5.3.txt
+#	new file:   lib/django-1.5/docs/releases/1.5.4.txt
+#	modified:   lib/django-1.5/docs/releases/1.5.txt
+#	modified:   lib/django-1.5/docs/releases/index.txt
+#	modified:   lib/django-1.5/docs/topics/auth/customizing.txt
+#	modified:   lib/django-1.5/docs/topics/auth/default.txt
+#	modified:   lib/django-1.5/docs/topics/auth/passwords.txt
+#	modified:   lib/django-1.5/docs/topics/cache.txt
+#	modified:   lib/django-1.5/docs/topics/class-based-views/generic-display.txt
+#	modified:   lib/django-1.5/docs/topics/class-based-views/generic-editing.txt
+#	modified:   lib/django-1.5/docs/topics/class-based-views/index.txt
+#	new file:   lib/django-1.5/docs/topics/class-based-views/intro.txt
+#	modified:   lib/django-1.5/docs/topics/class-based-views/mixins.txt
+#	modified:   lib/django-1.5/docs/topics/conditional-view-processing.txt
+#	modified:   lib/django-1.5/docs/topics/db/aggregation.txt
+#	modified:   lib/django-1.5/docs/topics/db/managers.txt
+#	modified:   lib/django-1.5/docs/topics/db/models.txt
+#	modified:   lib/django-1.5/docs/topics/db/optimization.txt
+#	modified:   lib/django-1.5/docs/topics/db/queries.txt
+#	modified:   lib/django-1.5/docs/topics/files.txt
+#	modified:   lib/django-1.5/docs/topics/forms/formsets.txt
+#	modified:   lib/django-1.5/docs/topics/forms/media.txt
+#	modified:   lib/django-1.5/docs/topics/forms/modelforms.txt
+#	modified:   lib/django-1.5/docs/topics/http/file-uploads.txt
+#	modified:   lib/django-1.5/docs/topics/http/sessions.txt
+#	modified:   lib/django-1.5/docs/topics/http/shortcuts.txt
+#	modified:   lib/django-1.5/docs/topics/http/urls.txt
+#	modified:   lib/django-1.5/docs/topics/i18n/translation.txt
+#	modified:   lib/django-1.5/docs/topics/logging.txt
+#	modified:   lib/django-1.5/docs/topics/python3.txt
+#	modified:   lib/django-1.5/docs/topics/serialization.txt
+#	modified:   lib/django-1.5/docs/topics/settings.txt
+#	modified:   lib/django-1.5/docs/topics/signing.txt
+#	modified:   lib/django-1.5/docs/topics/templates.txt
+#	modified:   lib/django-1.5/docs/topics/testing/advanced.txt
+#	modified:   lib/django-1.5/docs/topics/testing/overview.txt
+#	new file:   lib/django-1.5/extras/Makefile
+#	modified:   lib/django-1.5/scripts/manage_translations.py
+#	modified:   lib/django-1.5/setup.cfg
+#	modified:   lib/django-1.5/setup.py
+#	new file:   lib/django-1.5/tests/.coveragerc
+#	modified:   lib/django-1.5/tests/modeltests/basic/models.py
+#	modified:   lib/django-1.5/tests/modeltests/basic/tests.py
+#	modified:   lib/django-1.5/tests/modeltests/many_to_many/models.py
+#	modified:   lib/django-1.5/tests/modeltests/prefetch_related/models.py
+#	modified:   lib/django-1.5/tests/modeltests/prefetch_related/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/admin_scripts/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/admin_widgets/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/aggregation_regress/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/defaultfilters/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/defer_regress/tests.py
+#	new file:   lib/django-1.5/tests/regressiontests/forms/tests/filepath_test_files/.dot-file
+#	new file:   lib/django-1.5/tests/regressiontests/forms/tests/filepath_test_files/directory/.keep
+#	modified:   lib/django-1.5/tests/regressiontests/forms/tests/forms.py
+#	modified:   lib/django-1.5/tests/regressiontests/i18n/commands/extraction.py
+#	new file:   lib/django-1.5/tests/regressiontests/i18n/commands/not_utf8.sample
+#	modified:   lib/django-1.5/tests/regressiontests/logging_tests/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/queries/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/queryset_pickle/models.py
+#	modified:   lib/django-1.5/tests/regressiontests/queryset_pickle/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/requests/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/templates/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/test_client_regress/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/test_client_regress/urls.py
+#	modified:   lib/django-1.5/tests/regressiontests/test_client_regress/views.py
+#	modified:   lib/django-1.5/tests/regressiontests/test_runner/deprecation_app/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/test_runner/tests.py
+#	modified:   lib/django-1.5/tests/regressiontests/utils/encoding.py
+#	modified:   lib/django-1.5/tests/regressiontests/utils/html.py
+#	new file:   lib/django-1.5/tests/regressiontests/utils/itercompat.py
+#	modified:   lib/django-1.5/tests/regressiontests/utils/models.py
+#	modified:   lib/django-1.5/tests/regressiontests/utils/module_loading.py
+#	modified:   lib/django-1.5/tests/regressiontests/utils/simplelazyobject.py
+#	modified:   lib/django-1.5/tests/regressiontests/utils/tests.py
+#	new file:   lib/django-1.5/tests/requirements/base.txt
+#	new file:   lib/django-1.5/tests/requirements/mysql.txt
+#	new file:   lib/django-1.5/tests/requirements/oracle.txt
+#	new file:   lib/django-1.5/tests/requirements/postgres.txt
+#	new file:   lib/django-1.5/tests/requirements/py2.txt
+#	new file:   lib/django-1.5/tests/requirements/py3.txt
+#	modified:   lib/django-1.5/tests/runtests.py
+#	modified:   lib/endpoints-1.0/endpoints/api_config.py
+#	modified:   lib/endpoints-1.0/endpoints/message_parser.py
+#	new file:   lib/protorpc-1.0/LICENSE
+#	new file:   lib/protorpc-1.0/protorpc/__init__.py
+#	new file:   lib/protorpc-1.0/protorpc/definition.py
+#	new file:   lib/protorpc-1.0/protorpc/descriptor.py
+#	new file:   lib/protorpc-1.0/protorpc/generate.py
+#	new file:   lib/protorpc-1.0/protorpc/generate_proto.py
+#	new file:   lib/protorpc-1.0/protorpc/generate_python.py
+#	new file:   lib/protorpc-1.0/protorpc/google_imports.py
+#	new file:   lib/protorpc-1.0/protorpc/message_types.py
+#	new file:   lib/protorpc-1.0/protorpc/messages.py
+#	new file:   lib/protorpc-1.0/protorpc/protobuf.py
+#	new file:   lib/protorpc-1.0/protorpc/protojson.py
+#	new file:   lib/protorpc-1.0/protorpc/protourlencode.py
+#	new file:   lib/protorpc-1.0/protorpc/registry.py
+#	new file:   lib/protorpc-1.0/protorpc/remote.py
+#	new file:   lib/protorpc-1.0/protorpc/static/base.html
+#	new file:   lib/protorpc-1.0/protorpc/static/forms.html
+#	new file:   lib/protorpc-1.0/protorpc/static/forms.js
+#	new file:   lib/protorpc-1.0/protorpc/static/jquery-1.4.2.min.js
+#	new file:   lib/protorpc-1.0/protorpc/static/jquery.json-2.2.min.js
+#	new file:   lib/protorpc-1.0/protorpc/static/methods.html
+#	new file:   lib/protorpc-1.0/protorpc/transport.py
+#	new file:   lib/protorpc-1.0/protorpc/util.py
+#	new file:   lib/protorpc-1.0/protorpc/webapp/__init__.py
+#	new file:   lib/protorpc-1.0/protorpc/webapp/forms.py
+#	new file:   lib/protorpc-1.0/protorpc/webapp/service_handlers.py
+#	new file:   lib/protorpc-1.0/protorpc/wsgi/__init__.py
+#	new file:   lib/protorpc-1.0/protorpc/wsgi/service.py
+#	new file:   lib/protorpc-1.0/protorpc/wsgi/util.py
+#	modified:   old_dev_appserver.py
+#	modified:   php/sdk/google/appengine/api/app_identity/AppIdentityService.php
+#	modified:   php/sdk/google/appengine/api/cloud_storage/CloudStorageTools.php
+#	modified:   php/sdk/google/appengine/api/cloud_storage/CloudStorageToolsTest.php
+#	modified:   php/sdk/google/appengine/api/log/LogService.php
+#	modified:   php/sdk/google/appengine/api/mail/AdminMessage.php
+#	modified:   php/sdk/google/appengine/api/mail/BaseMessage.php
+#	modified:   php/sdk/google/appengine/api/mail/MailService.php
+#	modified:   php/sdk/google/appengine/api/mail/Message.php
+#	modified:   php/sdk/google/appengine/api/mail_service_pb.php
+#	modified:   php/sdk/google/appengine/api/modules/ModulesService.php
+#	modified:   php/sdk/google/appengine/api/modules/ModulesServiceTest.php
+#	modified:   php/sdk/google/appengine/api/taskqueue/PushQueue.php
+#	modified:   php/sdk/google/appengine/api/taskqueue/PushQueueTest.php
+#	modified:   php/sdk/google/appengine/api/taskqueue/PushTask.php
+#	modified:   php/sdk/google/appengine/api/taskqueue/PushTaskTest.php
+#	modified:   php/sdk/google/appengine/api/taskqueue/TaskAlreadyExistsException.php
+#	modified:   php/sdk/google/appengine/api/taskqueue/TransientTaskQueueException.php
+#	modified:   php/sdk/google/appengine/api/user_service_pb.php
+#	modified:   php/sdk/google/appengine/api/users/User.php
+#	modified:   php/sdk/google/appengine/api/users/UserService.php
+#	modified:   php/sdk/google/appengine/api/users/UserTest.php
+#	modified:   php/sdk/google/appengine/datastore/datastore_v3_pb.php
+#	modified:   php/sdk/google/appengine/datastore/entity_pb.php
+#	modified:   php/sdk/google/appengine/ext/cloud_storage_streams/CloudStorageClient.php
+#	modified:   php/sdk/google/appengine/ext/cloud_storage_streams/CloudStorageStreamWrapper.php
+#	modified:   php/sdk/google/appengine/ext/cloud_storage_streams/CloudStorageStreamWrapperTest.php
+#	modified:   php/sdk/google/appengine/runtime/Memcache.php
+#	modified:   php/sdk/google/appengine/runtime/MemcacheTest.php
+#	modified:   php/sdk/google/appengine/runtime/MemcacheUtils.php
+#	modified:   php/sdk/google/appengine/runtime/MemcachedTest.php
+#	modified:   php/sdk/google/appengine/runtime/OverQuotaError.php
+#	modified:   php/sdk/google/appengine/runtime/RealApiProxy.php
+#	modified:   php/sdk/google/appengine/runtime/RemoteApiProxy.php
+#	modified:   php/sdk/google/appengine/runtime/Setup.php
+#	modified:   remote_api_shell.py
+#	modified:   run_tests.py
+#	new file:   status.log
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   status.log
+#

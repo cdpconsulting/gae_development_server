@@ -188,12 +188,17 @@ class ParseMaxServerInstancesTest(unittest.TestCase):
 
   def test_single_zero_arg(self):
     self.assertRaisesRegexp(argparse.ArgumentTypeError,
-                            'Cannot specify zero instances for all',
+                            'count must be greater than zero',
                             devappserver2.parse_max_module_instances, '0')
+
+  def test_single_negative_arg(self):
+    self.assertRaisesRegexp(argparse.ArgumentTypeError,
+                            'count must be greater than zero',
+                            devappserver2.parse_max_module_instances, '-1')
 
   def test_single_nonint_arg(self):
     self.assertRaisesRegexp(argparse.ArgumentTypeError,
-                            'Invalid instance count:',
+                            'Invalid max instance count:',
                             devappserver2.parse_max_module_instances, 'cat')
 
   def test_multiple_valid_args(self):
@@ -205,36 +210,42 @@ class ParseMaxServerInstancesTest(unittest.TestCase):
   def test_multiple_non_colon(self):
     self.assertRaisesRegexp(
         argparse.ArgumentTypeError,
-        'Expected "module:max_instances"',
+        'Expected "module:max_instance_count"',
         devappserver2.parse_max_module_instances, 'default:10,foo')
 
   def test_multiple_non_int(self):
     self.assertRaisesRegexp(
         argparse.ArgumentTypeError,
-        'Expected "module:max_instances"',
+        'Expected "module:max_instance_count"',
         devappserver2.parse_max_module_instances, 'default:cat')
 
   def test_duplicate_modules(self):
     self.assertRaisesRegexp(
         argparse.ArgumentTypeError,
-        'Duplicate max instance value',
+        'Duplicate max instance count',
         devappserver2.parse_max_module_instances, 'default:5,default:10')
 
   def test_multiple_with_zero(self):
     self.assertRaisesRegexp(
         argparse.ArgumentTypeError,
-        'Cannot specify zero instances for module',
-        devappserver2.parse_max_module_instances, 'default:5,foo:0')
+        'count for module zero must be greater than zero',
+        devappserver2.parse_max_module_instances, 'default:5,zero:0')
+
+  def test_multiple_with_negative(self):
+    self.assertRaisesRegexp(
+        argparse.ArgumentTypeError,
+        'count for module negative must be greater than zero',
+        devappserver2.parse_max_module_instances, 'default:5,negative:-1')
 
   def test_multiple_missing_name(self):
     self.assertEqual(
         {'default': 10},
         devappserver2.parse_max_module_instances(':10'))
 
-  def test_multiple_missing_value(self):
+  def test_multiple_missing_count(self):
     self.assertRaisesRegexp(
         argparse.ArgumentTypeError,
-        'Expected "module:max_instances"',
+        'Expected "module:max_instance_count"',
         devappserver2.parse_max_module_instances, 'default:')
 
 
@@ -275,6 +286,50 @@ class ParseThreadsafeOverrideTest(unittest.TestCase):
     self.assertEqual(
         {'default': False},
         devappserver2.parse_threadsafe_override(':No'))
+
+
+class FakeApplicationConfiguration(object):
+
+  def __init__(self, modules):
+    self.modules = modules
+
+
+class FakeModuleConfiguration(object):
+
+  def __init__(self, module_name):
+    self.module_name = module_name
+
+
+class CreateModuleToSettingTest(unittest.TestCase):
+
+  def setUp(self):
+    self.application_configuration = FakeApplicationConfiguration([
+        FakeModuleConfiguration('m1'), FakeModuleConfiguration('m2'),
+        FakeModuleConfiguration('m3')])
+
+  def testNone(self):
+    self.assertEquals(
+        {},
+        devappserver2.DevelopmentServer._create_module_to_setting(
+            None, self.application_configuration, '--option'))
+
+  def testDict(self):
+    self.assertEquals(
+        {'m1': 3, 'm3': 1},
+        devappserver2.DevelopmentServer._create_module_to_setting(
+            {'m1': 3, 'm3': 1}, self.application_configuration, '--option'))
+
+  def testSingleValue(self):
+    self.assertEquals(
+        {'m1': True, 'm2': True, 'm3': True},
+        devappserver2.DevelopmentServer._create_module_to_setting(
+            True, self.application_configuration, '--option'))
+
+  def testDictWithUnknownModules(self):
+    self.assertEquals(
+        {'m1': 3.5},
+        devappserver2.DevelopmentServer._create_module_to_setting(
+            {'m1': 3.5, 'm4': 2.7}, self.application_configuration, '--option'))
 
 
 if __name__ == '__main__':

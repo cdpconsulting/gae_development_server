@@ -59,7 +59,6 @@ final class User {
       $federated_identity = null,
       $federated_provider = null,
       $user_id = null) {
-
     $auth_domain = getenv('AUTH_DOMAIN');
     assert($auth_domain !== false);
 
@@ -87,7 +86,7 @@ final class User {
    */
   public function getNickname() {
     if ($this->email != null && $this->auth_domain != null &&
-        util\endsWith($this->email, $this->auth_domain)) {
+        util\endsWith($this->email, '@' . $this->auth_domain)) {
       $suffixLen = strlen($this->auth_domain) + 1;
       return substr($this->email, 0, -$suffixLen);
     } else if ($this->federated_identity) {

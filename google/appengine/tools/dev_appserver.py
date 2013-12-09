@@ -130,7 +130,7 @@ from google.appengine.api.system import system_stub
 from google.appengine.api.xmpp import xmpp_service_stub
 from google.appengine.datastore import datastore_sqlite_stub
 from google.appengine.datastore import datastore_stub_util
-from google.appengine.ext.cloudstorage import stub_dispatcher as gcs_dispatcher
+from google.appengine.datastore import datastore_v4_stub
 from google.appengine import dist
 
 try:
@@ -3575,6 +3575,10 @@ def SetupStubs(app_id, **config):
         'datastore_v3', datastore)
 
     apiproxy_stub_map.apiproxy.RegisterStub(
+        'datastore_v4',
+        datastore_v4_stub.DatastoreV4Stub(app_id))
+
+    apiproxy_stub_map.apiproxy.RegisterStub(
         'mail',
         mail_stub.MailServiceStub(smtp_host,
                                   smtp_port,
@@ -3595,13 +3599,9 @@ def SetupStubs(app_id, **config):
             task_retry_seconds=task_retry_seconds,
             default_http_server='%s:%s' % (serve_address, serve_port)))
 
-    urlmatchers_to_fetch_functions = []
-    urlmatchers_to_fetch_functions.extend(
-        gcs_dispatcher.URLMATCHERS_TO_FETCH_FUNCTIONS)
     apiproxy_stub_map.apiproxy.RegisterStub(
         'urlfetch',
-        urlfetch_stub.URLFetchServiceStub(
-            urlmatchers_to_fetch_functions=urlmatchers_to_fetch_functions))
+        urlfetch_stub.URLFetchServiceStub())
 
     apiproxy_stub_map.apiproxy.RegisterStub(
         'xmpp',

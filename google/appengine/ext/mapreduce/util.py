@@ -54,6 +54,9 @@ import os
 import pickle
 import types
 
+import google
+from google.appengine.ext import ndb
+
 from google.appengine.datastore import datastore_rpc
 from google.appengine.ext.mapreduce import parameters
 
@@ -131,10 +134,10 @@ def get_queue_name(queue_name):
   if queue_name:
     return queue_name
   queue_name = os.environ.get("HTTP_X_APPENGINE_QUEUENAME",
-                              parameters.DEFAULT_QUEUE_NAME)
+                              parameters.config.QUEUE_NAME)
   if len(queue_name) > 1 and queue_name[0:2] == "__":
 
-    return parameters.DEFAULT_QUEUE_NAME
+    return parameters.config.QUEUE_NAME
   else:
     return queue_name
 
@@ -349,3 +352,16 @@ def create_datastore_write_config(mapreduce_spec):
   else:
 
     return datastore_rpc.Configuration()
+
+
+def _set_ndb_cache_policy():
+  """Tell NDB to never cache anything in memcache or in-process.
+
+  This ensures that entities fetched from Datastore input_readers via NDB
+  will not bloat up the request memory size and Datastore Puts will avoid
+  doing calls to memcache. Without this you get soft memory limit exits,
+  which hurts overall throughput.
+  """
+  ndb_ctx = ndb.get_context()
+  ndb_ctx.set_cache_policy(lambda key: False)
+  ndb_ctx.set_memcache_policy(lambda key: False)

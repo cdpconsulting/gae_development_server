@@ -49,6 +49,7 @@ import time
 from appengine_pipeline.src import pipeline
 from appengine_pipeline.src.pipeline import common as pipeline_common
 from google.appengine.api import files
+from google.appengine.api import modules
 from google.appengine.api.files import file_service_pb
 from google.appengine.ext import db
 from google.appengine.ext.mapreduce import context
@@ -59,6 +60,7 @@ from google.appengine.ext.mapreduce import operation
 from google.appengine.ext.mapreduce import output_writers
 from google.appengine.ext.mapreduce import pipeline_base
 from google.appengine.ext.mapreduce import records
+
 
 
 
@@ -264,7 +266,7 @@ class _MergingReader(input_readers.InputReader):
     """
     ctx = context.get()
     mapper_spec = ctx.mapreduce_spec.mapper
-    shard_number = ctx.shard_state.shard_number
+    shard_number = ctx._shard_state.shard_number
     filenames = mapper_spec.params[self.FILES_PARAM][shard_number]
 
     if len(filenames) != len(self._offsets):
@@ -478,13 +480,13 @@ class _HashingBlobstoreOutputWriter(output_writers.BlobstoreOutputWriterBase):
   def finalize(self, ctx, shard_state):
     pass
 
-  def write(self, data, ctx):
+  def write(self, data):
     """Write data.
 
     Args:
       data: actual data yielded from handler. Type is writer-specific.
-      ctx: an instance of context.Context.
     """
+    ctx = context.get()
     if len(data) != 2:
       logging.error("Got bad tuple of length %d (2-tuple expected): %s",
                     len(data), data)
@@ -602,12 +604,12 @@ class _HashPipeline(pipeline_base.PipelineBase):
     if shards is None:
       shards = len(filenames)
     yield mapper_pipeline.MapperPipeline(
-            job_name + "-shuffle-hash",
-            __name__ + "._hashing_map",
-            input_readers.__name__ + ".RecordsReader",
-            output_writer_spec= __name__ + "._HashingBlobstoreOutputWriter",
-            params={'files': filenames},
-            shards=shards)
+        job_name + "-shuffle-hash",
+        __name__ + "._hashing_map",
+        input_readers.__name__ + ".RecordsReader",
+        output_writer_spec= __name__ + "._HashingBlobstoreOutputWriter",
+        params={'files': filenames},
+        shards=shards)
 
 
 class _ShuffleServicePipeline(pipeline_base.PipelineBase):
@@ -646,14 +648,28 @@ class _ShuffleServicePipeline(pipeline_base.PipelineBase):
           _blobinfo_uploaded_filename=blob_file_name)
       output_files.append(file_name)
     self.fill(self.outputs._output_files, output_files)
+
+
+
+    target = modules.get_current_version_name()
+    module_name = modules.get_current_module_name()
+    if module_name != "default":
+
+
+
+      target = "%s.%s." % (target, module_name)
+
     files.shuffler.shuffle("%s-%s" % (job_name, int(time.time())),
                            input_files,
                            output_files,
                            {
                                "url": self.get_callback_url(),
+
+
+
                                "method": "GET",
                                "queue": self.queue_name,
-                               "version": os.environ["CURRENT_VERSION_ID"],
+                               "version": target,
                            })
 
   def callback(self, **kwargs):

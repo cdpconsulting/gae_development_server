@@ -113,6 +113,7 @@ except AttributeError:
 
 
   mail_stub = None
+from google.appengine.api import request_info
 from google.appengine.api import urlfetch_stub
 from google.appengine.api import user_service_stub
 from google.appengine.api.app_identity import app_identity_stub
@@ -130,6 +131,7 @@ try:
 except ImportError:
   logservice_stub = None
 from google.appengine.api.memcache import memcache_stub
+from google.appengine.api.modules import modules_stub
 try:
   from google.appengine.api.search import simple_search_stub
 except ImportError:
@@ -141,7 +143,9 @@ try:
 except ImportError:
   datastore_sqlite_stub = None
 from google.appengine.datastore import datastore_stub_util
+from google.appengine.ext.cloudstorage import common as gcs_common
 from google.appengine.ext.cloudstorage import stub_dispatcher as gcs_dispatcher
+
 
 
 DEFAULT_ENVIRONMENT = {
@@ -183,6 +187,7 @@ URLFETCH_SERVICE_NAME = 'urlfetch'
 USER_SERVICE_NAME = 'user'
 XMPP_SERVICE_NAME = 'xmpp'
 SEARCH_SERVICE_NAME = 'search'
+MODULES_SERVICE_NAME = 'modules'
 
 
 INIT_STUB_METHOD_NAMES = {
@@ -201,6 +206,7 @@ INIT_STUB_METHOD_NAMES = {
     USER_SERVICE_NAME: 'init_user_stub',
     XMPP_SERVICE_NAME: 'init_xmpp_stub',
     SEARCH_SERVICE_NAME: 'init_search_stub',
+    MODULES_SERVICE_NAME: 'init_modules_stub'
 }
 
 
@@ -209,6 +215,37 @@ SUPPORTED_SERVICES = sorted(INIT_STUB_METHOD_NAMES)
 
 AUTO_ID_POLICY_SEQUENTIAL = datastore_stub_util.SEQUENTIAL
 AUTO_ID_POLICY_SCATTERED = datastore_stub_util.SCATTERED
+
+
+
+def urlfetch_to_gcs_stub(url, payload, method, headers, request, response,
+                         follow_redirects=False, deadline=None,
+                         validate_certificate=None):
+
+  """Forwards gcs urlfetch requests to gcs_dispatcher."""
+  headers_map = dict(
+      (header.key().lower(), header.value()) for header in headers)
+  result = gcs_dispatcher.dispatch(method, headers_map, url, payload)
+  response.set_statuscode(result.status_code)
+  response.set_content(result.content[:urlfetch_stub.MAX_RESPONSE_SIZE])
+  for k, v in result.headers.iteritems():
+    if k.lower() == 'content-length' and method != 'HEAD':
+      v = len(response.content())
+    header_proto = response.add_header()
+    header_proto.set_key(k)
+    header_proto.set_value(str(v))
+  if len(result.content) > urlfetch_stub.MAX_RESPONSE_SIZE:
+    response.set_contentwastruncated(True)
+
+
+def urlmatcher_for_gcs_stub(url):
+  """Determines whether a url should be handled by gcs stub."""
+  return url.startswith(gcs_common.local_api_url())
+
+
+
+GCS_URLMATCHERS_TO_FETCH_FUNCTIONS = [
+    (urlmatcher_for_gcs_stub, urlfetch_to_gcs_stub)]
 
 
 class Error(Exception):
@@ -610,7 +647,7 @@ class Testbed(object):
       return
     urlmatchers_to_fetch_functions = []
     urlmatchers_to_fetch_functions.extend(
-        gcs_dispatcher.URLMATCHERS_TO_FETCH_FUNCTIONS)
+        GCS_URLMATCHERS_TO_FETCH_FUNCTIONS)
     stub = urlfetch_stub.URLFetchServiceStub(
         urlmatchers_to_fetch_functions=urlmatchers_to_fetch_functions)
     self._register_stub(URLFETCH_SERVICE_NAME, stub)
@@ -656,6 +693,20 @@ class Testbed(object):
       raise StubNotSupportedError('Could not initialize search API')
     stub = simple_search_stub.SearchServiceStub()
     self._register_stub(SEARCH_SERVICE_NAME, stub)
+
+  def init_modules_stub(self, enable=True):
+    """Enable the modules stub.
+
+    Args:
+      enable: True, if the fake service should be enabled, False if real
+              service should be disabled.
+    """
+    if not enable:
+      self._disable_stub(MODULES_SERVICE_NAME)
+      return
+
+    stub = modules_stub.ModulesServiceStub(request_info._LocalRequestInfo())
+    self._register_stub(MODULES_SERVICE_NAME, stub)
 
   def _init_stub(self, service_name, *args, **kwargs):
     """Enable a stub by service name.
